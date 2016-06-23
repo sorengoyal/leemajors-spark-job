@@ -1,0 +1,21 @@
+{
+    "jobName": "sample-message-count",
+    "localMode": false,
+    "numReaderThreads": 2,
+    "numExecutors": 2,
+    "batchDuration": 2,
+    "zookeepers": "zk-ewep-1.us-west-2.test.expedia.com,zk-ewep-2.us-west-2.test.expedia.com,zk-ewep-3.us-west-2.test.expedia.com",
+    "zookeeperNodePath": "/kafka/ewep",
+    "kafkaTopic": "uis",
+    "collectorEndpoint": "http://collector.test.expedia.com/",
+    "queueName": "sample.json",
+    "sendToKafka": true,
+    "saveToS3": true,
+    "rollup": "Minute",
+    "checkPointInS3": false,
+    "checkPointEnabled": true,
+    "batch" : false,
+    "checkPointFolder": "/mnt/ewe-spark-checkpoints/",
+    "outputKafkaTopic": "sample",
+    "clusterID": "ewep"
+}
