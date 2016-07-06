@@ -1,12 +1,12 @@
 {
-    "jobName": "sample-message-count",
+    "jobName": "leemajors-message-count",
     "localMode": false,
     "numReaderThreads": 2,
     "numExecutors": 2,
     "batchDuration": 2,
-    "zookeepers": "zk-ewep-1.us-west-2.test.expedia.com,zk-ewep-2.us-west-2.test.expedia.com,zk-ewep-3.us-west-2.test.expedia.com",
-    "zookeeperNodePath": "/kafka/ewep",
-    "kafkaTopic": "uis",
+    "zookeepers": "zk-watson-1.us-west-2.test.expedia.com:2181",
+    "zookeeperNodePath": "/kafka/watson",
+    "kafkaTopic": "omniture-info-test",
     "collectorEndpoint": "http://collector.test.expedia.com/",
     "queueName": "sample.json",
     "sendToKafka": true,
@@ -16,6 +16,6 @@
     "checkPointEnabled": true,
     "batch" : false,
     "checkPointFolder": "/mnt/ewe-spark-checkpoints/",
-    "outputKafkaTopic": "sample",
-    "clusterID": "ewep"
+    "outputKafkaTopic": "leemajors",
+    "clusterID": "watson"
 }

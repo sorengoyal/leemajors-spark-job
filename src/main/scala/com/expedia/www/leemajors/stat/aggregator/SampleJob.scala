@@ -1,23 +1,25 @@
 package com.expedia.www.leemajors.stat.aggregator
 
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming.{ Minutes, Seconds, StreamingContext }
-import org.apache.spark.streaming.dstream.{ DStream, ReceiverInputDStream }
+import org.apache.spark.streaming.{Minutes, Seconds, StreamingContext}
+import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
 import org.apache.spark.streaming.kafka.KafkaUtils
-
 import com.expedia.spark.streaming.common.Output
 import com.expedia.spark.streaming.common.StreamingJobRunner
 import com.expedia.spark.streaming.common.ThriftDeserializer
-import com.expedia.www.user.interaction.v1.UserInteraction
+import com.expedia.www.hendrix.signals.definition.SignalData
+import com.expedia.www.signal.sdk.model.SpecificSignalReader
 
-object SampleJob extends StreamingJobRunner[String, String, String, SampleOptions] with ThriftDeserializer {
+object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], Array[Byte], SampleOptions] with ThriftDeserializer {
 
   override val optionsType = classOf[SampleOptions]
 
-  override def doJob(options: SampleOptions, messages: DStream[String]): Unit = {
-    val result = MessageCount(this.getClass.getName, messages, Minutes(1), Seconds(10))
+  val signalReader: SpecificSignalReader[SignalData] = new SpecificSignalReader[SignalData](() => new SignalData())
 
-    result.foreachRDD { rdd =>
+  override def doJob(options: SampleOptions, messages: DStream[Array[Byte]]): Unit = {
+    //val result = MessageCount(this.getClass.getName, messages, Minutes(1), Seconds(10))
+
+    messages.foreachRDD { rdd =>
       rdd.foreachPartition(iterator => {
         iterator.foreach(iResult => {
           Output.sendAsCsv(iResult, options)
@@ -32,12 +34,12 @@ object SampleJob extends StreamingJobRunner[String, String, String, SampleOption
     }
   }
 
-  override def mapper(input: DStream[(String, String)]): DStream[String] = {
-    input.map(_._2).map(i => toJson(i.getBytes, classOf[UserInteraction]))
+  override def mapper(input: DStream[(Array[Byte], Array[Byte])]): DStream[SpecficSignal[SignalData]] = {
+    input.map(_._2).map(msg =>signalReader.deserialize(msg.value()))
   }
 
   override def createInputStream(options: SampleOptions, ssc: StreamingContext, storageLevel: StorageLevel)
-    (mapper: DStream[(String, String)] => DStream[String]): DStream[String] = {
+    (mapper: DStream[(Array[Byte], Array[Byte])] => DStream[Array[Byte]]): DStream[Array[Byte]] = {
 
     val topicMap = options.kafkaTopic.split(",").map((_, options.numReaderThreads)).toMap
     val kafkaDStreams = (1 to options.numReaderThreads)

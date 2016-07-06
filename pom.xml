@@ -17,6 +17,21 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.expedia.www</groupId>
+			<artifactId>signal-definition</artifactId>
+			<version>1.35</version>
+		</dependency>
+		<dependency>
+			<groupId>com.expedia.www.watson.sdk</groupId>
+			<artifactId>watson-sdk</artifactId>
+			<version>0.0.16</version>
+		</dependency>
+		<dependency>
+			<groupId>com.expedia.www</groupId>
+			<artifactId>travel-ads-test-omniture-hendrix-generator-lambda</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_${scala.major.minor.version}</artifactId>
 			<version>${spark.version}</version>
