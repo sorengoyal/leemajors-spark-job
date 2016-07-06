@@ -1,6 +1,7 @@
-package com.expedia.www.spark.streaming.sample
+package com.expedia.www.leemajors.stat.aggregator.tests
 
-import com.expedia.www.leemajors.stat.aggregator.MessageCount
+
+import com.expedia.www.leemajors.stat.aggregator.MessageProcess
 import com.google.gson.Gson
 import org.apache.spark.streaming.{Seconds, TestSuiteBase}
 import org.apache.spark.streaming.dstream.DStream
@@ -8,49 +9,44 @@ import org.apache.spark.streaming.dstream.DStream
 class SampleFuncTest extends TestSuiteBase {
 
   override def actuallyWait: Boolean = false
+
   override def numInputPartitions: Int = 1
-  override def maxWaitTimeMillis: Int = 30 * 1000 // 30 seconds
+
+  override def maxWaitTimeMillis: Int = 30 * 1000
+
+  // 30 seconds
   val gson: Gson = new Gson
-  val dataFile = "src/test/data/small-uis.jsonData"
+  val dataFile = "src/test/data/leemajors.jsonData"
 
-  test("Sample UIS message count test case") {
+  test("Sample Message Processing test case") {
 
-    val inputSeq = List.fill(3)(uisMessagesGenerator)
+    val inputSeq = List.fill(3)(messagesGenerator)
 
-    val ssc = setupStreams[String, MessageCount](inputSeq,
+    val ssc = setupStreams[String, MessageProcess](inputSeq,
       (inputDStream: DStream[String]) => {
-        MessageCount(this.getClass.getName, inputDStream, Seconds(2), Seconds(1))
+        MessageProcess(this.getClass.getName, inputDStream, Seconds(2), Seconds(1))
       })
 
-    val output: Seq[Seq[MessageCount]] = runStreams[MessageCount](ssc, 5, 5)
+    val output: Seq[Seq[MessageProcess]] = runStreams[MessageProcess](ssc, 5, 5)
 
-    var count = 0
-    output.foreach(messageCounts => {
-      count += 1
-      assert(!messageCounts.isEmpty)
+    output.foreach(messages => {
+      assert(!messages.isEmpty)
 
-      messageCounts.foreach(messageCount => {
-        if (count == 5) {
-          assert(messageCount.count == 0)
-        } else if (count == 1 || count == 4) {
-          assert(messageCount.count == 46)
-        } else {
-          assert(messageCount.count == 92)
-        }
-        logInfo(count + ") " + messageCount)
+      messages.foreach(message => {
+        println(message)
       })
     })
 
-    output.last.foreach {
-      case (messageCount) =>
-        assert(messageCount.count == 0)
-    }
+    //    output.last.foreach {
+    //      case (messageCount) =>
+    //        assert(messageCount.count == 0)
+    //    }
+    //  }
   }
 
-  def uisMessagesGenerator(): scala.collection.mutable.Queue[String] = {
+  def messagesGenerator(): scala.collection.mutable.Queue[String] = {
     val inputData = scala.collection.mutable.Queue[String]()
     inputData ++= scala.io.Source.fromFile(dataFile).getLines().toSeq
     inputData
   }
-
 }
