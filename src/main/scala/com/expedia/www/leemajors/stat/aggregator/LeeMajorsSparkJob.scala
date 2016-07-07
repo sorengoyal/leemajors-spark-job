@@ -19,7 +19,7 @@ object LeeMajorsSparkJob extends StreamingJobRunner[Array[Byte], Array[Byte], St
   val signalReader: SpecificSignalReader[SignalData] = new SpecificSignalReader[SignalData](() => new SignalData())
 
   override def doJob(options: SampleOptions, messages: DStream[String]): Unit = {
-    val result = MessageProcess(this.getClass.getName, messages, Minutes(1), Seconds(10))
+    val result = MessageProcessor(this.getClass.getName, messages, Minutes(1), Seconds(10))
 
     result.foreachRDD { rdd =>
       rdd.foreachPartition(iterator => {

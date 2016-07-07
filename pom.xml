@@ -14,9 +14,12 @@
 	<properties>
 		<spark.streaming.mainclass>com.expedia.www.leemajors.stat.aggregator.SampleJob</spark.streaming.mainclass>
 		<!--TODO: Remove these new properties-->
+		<scalatest.version>2.2.4</scalatest.version>
 		<scala.major.version>2</scala.major.version>
 		<scala.minor.version>11</scala.minor.version>
-		<scala.major.minor.version>2.11</scala.major.minor.version>
+		<scala.maintenance.version>7</scala.maintenance.version>
+		<scala.major.minor.version>${scala.major.version}.${scala.minor.version}</scala.major.minor.version>
+		<scala-library.version>${scala.major.minor.version}.${scala.maintenance.version}</scala-library.version>
 		<!--<spark.version>1.6.0</spark.version>-->
 	</properties>
 
@@ -24,7 +27,7 @@
 		<dependency>
 			<groupId>org.scalatest</groupId>
 			<artifactId>scalatest_${scala.major.minor.version}</artifactId>
-			<version>3.0.0-RC4</version>
+			<version>${scalatest.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.expedia.www</groupId>
@@ -64,7 +67,7 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
-			<version>${scala.major.minor.version}.3</version>
+			<version>${scala-library.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

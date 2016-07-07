@@ -1,7 +1,7 @@
 package com.expedia.www.leemajors.stat.aggregator.tests
 
 
-import com.expedia.www.leemajors.stat.aggregator.MessageProcess
+import com.expedia.www.leemajors.stat.aggregator.MessageProcessor
 import com.google.gson.Gson
 import org.apache.spark.streaming.{Seconds, TestSuiteBase}
 import org.apache.spark.streaming.dstream.DStream
@@ -22,31 +22,31 @@ class SampleFuncTest extends TestSuiteBase {
 
     val inputSeq = List.fill(3)(messagesGenerator)
 
-    val ssc = setupStreams[String, MessageProcess](inputSeq,
+    val ssc = setupStreams[String, MessageProcessor](inputSeq,
       (inputDStream: DStream[String]) => {
-        MessageProcess(this.getClass.getName, inputDStream, Seconds(2), Seconds(1))
+        MessageProcessor(this.getClass.getName, inputDStream, Seconds(2), Seconds(1))
       })
 
-    val output: Seq[Seq[MessageProcess]] = runStreams[MessageProcess](ssc, 1, 5)
-
+    val output: Seq[Seq[MessageProcessor]] = runStreams[MessageProcessor](ssc, 1, 1)
+    var count = 0
     output.foreach(messages => {
       assert(!messages.isEmpty)
-
       messages.foreach(message => {
-        println(message)
+        count += 1
+        assert(message.data == "Hotel" + count.toString + ",1")
+        logInfo(message.data)
       })
     })
-
-    //    output.last.foreach {
-    //      case (messageCount) =>
-    //        assert(messageCount.count == 0)
-    //    }
-    //  }
+    output.last.foreach {
+      case (message) =>
+        assert(!message.data.isEmpty)
+    }
   }
 
   def messagesGenerator(): scala.collection.mutable.Queue[String] = {
     val inputData = scala.collection.mutable.Queue[String]()
     inputData ++= scala.io.Source.fromFile(dataFile).getLines().toSeq
+    //inputData.foreach(println(_))
     inputData
   }
 }

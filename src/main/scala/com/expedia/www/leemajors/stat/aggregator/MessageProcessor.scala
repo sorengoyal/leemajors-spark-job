@@ -5,7 +5,7 @@ import org.apache.spark.Logging
 import org.apache.spark.streaming.Duration
 import com.expedia.spark.streaming.common.Result
 
-case class MessageProcess(metric: String, data: String, jobName: String) extends Result(jobName) {
+case class MessageProcessor(metric: String, data: String, jobName: String) extends Result(jobName) {
 
   def this(data: String, jobName: String) = this("messageCount", data, jobName)
 
@@ -19,10 +19,10 @@ case class MessageProcess(metric: String, data: String, jobName: String) extends
 
 }
 
-object MessageProcess extends Serializable with Logging {
+object MessageProcessor extends Serializable with Logging {
 
-  def apply(jobName: String, messages: DStream[String], windowDuration: Duration, slideDuration: Duration): DStream[MessageProcess] = {
-    val messageCounts = messages.map(iValue => new MessageProcess(iValue + ",1", jobName))
-    messageCounts
+  def apply(jobName: String, messages: DStream[String], windowDuration: Duration, slideDuration: Duration): DStream[MessageProcessor] = {
+    val messageStream = messages.map(msg => new MessageProcessor(msg + ",1", jobName))
+    messageStream
   }
 }
