@@ -27,7 +27,7 @@ class SampleFuncTest extends TestSuiteBase {
         MessageProcess(this.getClass.getName, inputDStream, Seconds(2), Seconds(1))
       })
 
-    val output: Seq[Seq[MessageProcess]] = runStreams[MessageProcess](ssc, 5, 5)
+    val output: Seq[Seq[MessageProcess]] = runStreams[MessageProcess](ssc, 1, 5)
 
     output.foreach(messages => {
       assert(!messages.isEmpty)

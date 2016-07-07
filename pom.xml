@@ -13,9 +13,19 @@
 	</parent>
 	<properties>
 		<spark.streaming.mainclass>com.expedia.www.leemajors.stat.aggregator.SampleJob</spark.streaming.mainclass>
+		<!--TODO: Remove these new properties-->
+		<scala.major.version>2</scala.major.version>
+		<scala.minor.version>11</scala.minor.version>
+		<scala.major.minor.version>2.11</scala.major.minor.version>
+		<!--<spark.version>1.6.0</spark.version>-->
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_${scala.major.minor.version}</artifactId>
+			<version>3.0.0-RC4</version>
+		</dependency>
 		<dependency>
 			<groupId>com.expedia.www</groupId>
 			<artifactId>signal-definition</artifactId>
@@ -24,6 +34,10 @@
 				<exclusion>
 					<groupId>org.scala-lang</groupId>
 					<artifactId>scalap</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.json4s</groupId>
+					<artifactId>json4s-native_2.11</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -57,7 +71,7 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_${scala.major.minor.version}</artifactId>
 			<version>${spark.version}</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>org.scala-lang</groupId>
@@ -69,7 +83,7 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming_${scala.major.minor.version}</artifactId>
 			<version>${spark.version}</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.expedia.www.commons</groupId>
@@ -91,13 +105,13 @@
 			<artifactId>spark-streaming_${scala.major.minor.version}</artifactId>
 			<version>${spark.version}</version>
 			<type>test-jar</type>
-			<scope>test</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.parboiled</groupId>
 			<artifactId>parboiled-java</artifactId>
 			<version>1.0.2</version>
-			<scope>test</scope>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>
