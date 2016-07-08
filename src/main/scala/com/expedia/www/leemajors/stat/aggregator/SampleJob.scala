@@ -12,7 +12,7 @@ import com.expedia.www.hendrix.signals.definition.SignalData
 import com.expedia.www.signal.sdk.model.SpecificSignalReader
 
 import scala.util.{Failure, Success, Try}
-object LeeMajorsSparkJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, SampleOptions] with ThriftDeserializer {
+object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, SampleOptions] with ThriftDeserializer {
 
   override val optionsType = classOf[SampleOptions]
 
