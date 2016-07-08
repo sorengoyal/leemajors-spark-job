@@ -1,5 +1,5 @@
 {
-    "jobName": "leemajors-message-count",
+    "jobName": "leemajors-spark",
     "localMode": false,
     "numReaderThreads": 2,
     "numExecutors": 2,
