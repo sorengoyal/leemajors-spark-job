@@ -8,10 +8,12 @@ import kafka.serializer.DefaultDecoder
 import com.expedia.spark.streaming.common.Output
 import com.expedia.spark.streaming.common.StreamingJobRunner
 import com.expedia.spark.streaming.common.ThriftDeserializer
+import com.expedia.spark.streaming.common.options.SparkOptions
 import com.expedia.www.hendrix.signals.definition.SignalData
 import com.expedia.www.signal.sdk.model.SpecificSignalReader
+import org.apache.hadoop.conf.Configuration
+import org.apache.spark.SparkConf
 
-import scala.util.{Failure, Success, Try}
 object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, SampleOptions] with ThriftDeserializer {
 
   override val optionsType = classOf[SampleOptions]
@@ -58,4 +60,69 @@ object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, Sa
     mapper(ssc.union(kafkaDStreams).repartition(options.numExecutors))
   }
 
+  class LeeMajorsOptions extends SampleOptions {
+    override val batchDuration: Int = 2
+    override val zookeepers: String = "zk-watson-1.us-west-2.test.expedia.com:2181"
+    override val zookeeperConnectionTimeout: Int = 5000
+    override val zookeeperConnectionRetryInterval: Int = 30000
+    override val zookeeperNodePath: String = "/kafka/watson"
+    override val kafkaTopic: String = "omniture-info-test"
+    override val outputKafkaTopic: String = "leemajors"
+    override val clusterID: String = "watson"
+    override val collectorEndpoint: String = "http://collector.test.expedia.com/"
+    override val queueName: String = "sample.json"
+    override val batch: Boolean = true
+    override val sendToKafka: Boolean = true
+    override val saveToS3: Boolean = true
+    override val rollup: String = "Minute"
+    override val maxTriggeringTimeInMs = 10 * 1000 // 10 seconds
+    override val maxTriggeringNumOfMessages = 1000
+    override val numReaderThreads: Int = 2
+    override val numExecutors: Int = 2
+    override val checkPointInS3: Boolean = false
+    override val checkPointEnabled: Boolean = true
+    override val checkPointFolder: String = "/mnt/ewe-spark-checkpoints/"
+    override val jobName: String = "leemajors-spark"
+    override val localMode: Boolean = false
+
+  }
+  override def main(args: Array[String]): Unit = {
+
+    val options = new LeeMajorsOptions//readOptions(args)
+
+    val checkpointDir = getCheckPointDir(options)
+    println("checkpoint dir : " + checkpointDir)
+    val storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER
+
+    //    val storageLevel: StorageLevel = options.localMode match {
+    //      case true => StorageLevel.MEMORY_AND_DISK_SER
+    //      case false => StorageLevel.MEMORY_AND_DISK_SER_2
+    //    }
+    try {
+      println("job name = " + options.jobName)
+      logInfo("Starting " + this.getClass.getName + " with options : " + gson.toJson(options))
+
+      val sparkConf: SparkConf = getSparkConf(options)
+      val ssc = StreamingContext.getOrCreate(checkpointDir, () => {
+        createContext(sparkConf, options.batchDuration, checkpointDir)
+      }, new Configuration, true)
+
+
+      numPartitions = ssc.sparkContext.defaultParallelism
+      logInfo("defaultParallelism=" + ssc.sparkContext.defaultParallelism)
+
+      val messages = createInputStream(options, ssc, storageLevel)(mapper)
+      doJob(options, messages)
+
+      ssc.start()
+      ssc.awaitTermination()
+
+    } catch {
+      case ie: InterruptedException => {
+        logWarning("Interrupted job : " + this.getClass.getSimpleName)
+        throw ie
+      }
+      case t: Throwable => throw new SparkExecutionException(t)
+    }
+  }
 }
