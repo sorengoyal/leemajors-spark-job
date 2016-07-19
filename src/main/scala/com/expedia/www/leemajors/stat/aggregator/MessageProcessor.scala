@@ -3,7 +3,7 @@ package com.expedia.www.leemajors.stat.aggregator
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.Logging
 import org.apache.spark.streaming.Duration
-import com.expedia.spark.streaming.common.Result
+import com.expedia.www.leemajors.spark.streaming.common.Result
 
 case class MessageProcessor(metric: String, data: String, jobName: String) extends Result(jobName) {
 

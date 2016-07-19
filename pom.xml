@@ -88,25 +88,27 @@
 			<version>${spark.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.expedia.www.commons</groupId>
-			<artifactId>commons-spark</artifactId>
-			<version>1.0.50</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpcore</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-                <exclusion>
-                    <groupId>org.scalaj</groupId>
-                    <artifactId>scalaj-http_2.10</artifactId>
-                </exclusion>
-			</exclusions>
+		<!--<dependency>-->
+			<!--<groupId>com.expedia.www.commons</groupId>-->
+			<!--<artifactId>commons-spark</artifactId>-->
+			<!--<version>1.0.50</version>-->
+		<!--</dependency>-->
+        <dependency>
+            <groupId>com.expedia.www.commons</groupId>
+            <artifactId>commons-kafka_2.11</artifactId>
+            <version>0.0.50</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+        <dependency>
+			<groupId>org.scalaj</groupId>
+			<artifactId>scalaj-http_2.11</artifactId>
+            <version>1.1.4</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.expedia.www</groupId>
 			<artifactId>exp-user-interaction-messages-v1</artifactId>
