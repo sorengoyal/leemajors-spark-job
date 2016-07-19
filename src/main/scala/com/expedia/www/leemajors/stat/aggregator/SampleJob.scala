@@ -38,7 +38,7 @@ object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, Sa
 
   override def mapper(input: DStream[(Array[Byte], Array[Byte])]): DStream[String] = {
     input.map(_._2).map(msg => signalReader.deserialize(msg).get.data.get(1).toString)
-      /* data has teh following fields :
+    /* data has teh following fields :
        * 0 -> EventType
        * 1 -> HotelName
        * 2 -> GUID
@@ -47,7 +47,7 @@ object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, Sa
   }
 
   override def createInputStream(options: SampleOptions, ssc: StreamingContext, storageLevel: StorageLevel)
-    (mapper: DStream[(Array[Byte], Array[Byte])] => DStream[String]): DStream[String] = {
+                                (mapper: DStream[(Array[Byte], Array[Byte])] => DStream[String]): DStream[String] = {
 
     val kafkaParams: Map[String, String] = Map("zookeeper.connect" -> (options.zookeepers + options.zookeeperNodePath),
       "group.id" -> options.jobName,
@@ -57,47 +57,5 @@ object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, Sa
       .map { _ => KafkaUtils.createStream[Array[Byte], Array[Byte], DefaultDecoder, DefaultDecoder](ssc, kafkaParams, topicMap, storageLevel)
       }
     mapper(ssc.union(kafkaDStreams).repartition(options.numExecutors))
-  }
-
-
-  override def main(args: Array[String]): Unit = {
-
-    val options = new SampleOptions //readOptions(args)
-
-    val checkpointDir = getCheckPointDir(options)
-    println("checkpoint dir : " + checkpointDir)
-    val storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER
-
-    //NOTE: These lines were already commented out
-    //    val storageLevel: StorageLevel = options.localMode match {
-    //      case true => StorageLevel.MEMORY_AND_DISK_SER
-    //      case false => StorageLevel.MEMORY_AND_DISK_SER_2
-    //    }
-    try {
-      println("job name = " + options.jobName)
-      logInfo("Starting " + this.getClass.getName + " with options : " + gson.toJson(options))
-
-      val sparkConf: SparkConf = getSparkConf(options)
-      val ssc = StreamingContext.getOrCreate(checkpointDir, () => {
-        createContext(sparkConf, options.batchDuration, checkpointDir)
-      }, new Configuration, true)
-
-
-      numPartitions = ssc.sparkContext.defaultParallelism
-      logInfo("defaultParallelism=" + ssc.sparkContext.defaultParallelism)
-
-      val messages = createInputStream(options, ssc, storageLevel)(mapper)
-      doJob(options, messages)
-
-      ssc.start()
-      ssc.awaitTermination()
-
-    } catch {
-      case ie: InterruptedException => {
-        logWarning("Interrupted job : " + this.getClass.getSimpleName)
-        throw ie
-      }
-      case t: Throwable => throw new SparkExecutionException(t)
-    }
   }
 }
