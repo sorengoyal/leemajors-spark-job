@@ -1,6 +1,6 @@
 {
     "jobName": "leemajors-spark",
-    "localMode": false,
+    "localMode": true,
     "numReaderThreads": 2,
     "numExecutors": 2,
     "batchDuration": 2,

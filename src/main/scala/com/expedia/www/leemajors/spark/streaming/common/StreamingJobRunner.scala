@@ -125,3 +125,4 @@ abstract class Result(jobName: String, epochMs: Long = currentTime) extends Seri
     "epochMs=" + epochMs
   }
 }
+

@@ -14,36 +14,16 @@
 	<properties>
 		<spark.streaming.mainclass>com.expedia.www.leemajors.stat.aggregator.SampleJob</spark.streaming.mainclass>
 		<!--TODO: Remove these new properties-->
-		<scalatest.version>2.2.2</scalatest.version>
+		<scalatest.version>2.2.4</scalatest.version>
 		<scala.major.version>2</scala.major.version>
 		<scala.minor.version>11</scala.minor.version>
-		<scala.maintenance.version>8</scala.maintenance.version>
+		<scala.maintenance.version>7</scala.maintenance.version>
 		<scala.major.minor.version>${scala.major.version}.${scala.minor.version}</scala.major.minor.version>
 		<scala-library.version>${scala.major.minor.version}.${scala.maintenance.version}</scala-library.version>
 		<spark.version>1.4.0</spark.version>
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.scalatest</groupId>
-			<artifactId>scalatest_${scala.major.minor.version}</artifactId>
-			<version>${scalatest.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.expedia.www</groupId>
-			<artifactId>signal-definition</artifactId>
-			<version>1.35</version>
-			<!--<exclusions>-->
-				<!--<exclusion>-->
-					<!--<groupId>org.scala-lang</groupId>-->
-					<!--<artifactId>scalap</artifactId>-->
-				<!--</exclusion>-->
-				<!--<exclusion>-->
-					<!--<groupId>org.json4s</groupId>-->
-					<!--<artifactId>json4s-native_2.11</artifactId>-->
-				<!--</exclusion>-->
-			<!--</exclusions>-->
-		</dependency>
 		<dependency>
 			<groupId>com.expedia.www.watson.sdk</groupId>
 			<artifactId>watson-sdk</artifactId>
@@ -65,11 +45,26 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<!-- Force version of HttpClient compatible with AWS so Thrift doesn't pull in 4.2.x -->
+			<version>4.3.6</version>
+		</dependency>
+		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
 			<version>${scala-library.version}</version>
+			<!-- Override test scope from parent POM -->
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-reflect</artifactId>
+			<version>${scala-library.version}</version>
+			<!-- Override test scope from parent POM -->
+			<scope>compile</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_${scala.major.minor.version}</artifactId>
@@ -131,6 +126,13 @@
 			<artifactId>parboiled-java</artifactId>
 			<version>1.0.2</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_${scala.major.minor.version}</artifactId>
+			<version>${scalatest.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>

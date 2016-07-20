@@ -1,17 +1,13 @@
 package com.expedia.www.leemajors.stat.aggregator
 
-import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming.{Minutes, Seconds, StreamingContext}
-import org.apache.spark.streaming.dstream.{DStream, ReceiverInputDStream}
-import org.apache.spark.streaming.kafka.KafkaUtils
-import kafka.serializer.DefaultDecoder
-import com.expedia.www.leemajors.spark.streaming.common.Output
-import com.expedia.www.leemajors.spark.streaming.common.StreamingJobRunner
-import com.expedia.www.leemajors.spark.streaming.common.ThriftDeserializer
 import com.expedia.www.hendrix.signals.definition.SignalData
+import com.expedia.www.leemajors.spark.streaming.common.{Output, StreamingJobRunner, ThriftDeserializer}
 import com.expedia.www.signal.sdk.model.SpecificSignalReader
-import org.apache.hadoop.conf.Configuration
-import org.apache.spark.SparkConf
+import kafka.serializer.DefaultDecoder
+import org.apache.spark.storage.StorageLevel
+import org.apache.spark.streaming.dstream.DStream
+import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.spark.streaming.{Minutes, Seconds, StreamingContext}
 
 object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, SampleOptions] with ThriftDeserializer {
 
@@ -25,12 +21,13 @@ object SampleJob extends StreamingJobRunner[Array[Byte], Array[Byte], String, Sa
     result.foreachRDD { rdd =>
       rdd.foreachPartition(iterator => {
         iterator.foreach(iResult => {
-          Output.sendAsCsv(iResult, options)
+          //Output.sendAsCsv(iResult, options)
           /*
           Use this if want to send data directly to kafka, and set outputKafkaTopic to the kafka topic you want to send to
           Also set commons-spark version 1.0.38 or greater for it to work
           Output.sendDirectlyToKafka(iResult.toString(), options)
           */
+          Output.sendDirectlyToKafka(iResult.toString(), options)
         })
       })
     }
