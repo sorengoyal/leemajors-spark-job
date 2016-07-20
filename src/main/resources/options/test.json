@@ -1,9 +1,9 @@
 {
     "jobName": "leemajors-spark",
-    "localMode": true,
+    "localMode": false,
     "numReaderThreads": 2,
     "numExecutors": 2,
-    "batchDuration": 2,
+    "batchDuration": 20,
     "zookeepers": "zk-watson-1.us-west-2.test.expedia.com:2181",
     "zookeeperNodePath": "/kafka/watson",
     "kafkaTopic": "omniture-info-test",
@@ -16,6 +16,6 @@
     "checkPointEnabled": true,
     "batch" : false,
     "checkPointFolder": "/mnt/ewe-spark-checkpoints/",
-    "outputKafkaTopic": "leemajors",
+    "outputKafkaTopic": "sogoyal-sample",
     "clusterID": "watson"
 }
