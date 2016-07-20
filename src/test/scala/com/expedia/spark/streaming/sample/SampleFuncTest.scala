@@ -33,7 +33,7 @@ class SampleFuncTest extends TestSuiteBase {
       assert(!messages.isEmpty)
       messages.foreach(message => {
         count += 1
-        assert(message.data == "Hotel" + count.toString + ",1")
+        assert(message.data.contains(",2"))
         logInfo(message.data)
       })
     })
