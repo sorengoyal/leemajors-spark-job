@@ -1,9 +1,9 @@
 {
     "jobName": "leemajors-spark",
     "localMode": false,
-    "numReaderThreads": 2,
-    "numExecutors": 2,
-    "batchDuration": 20,
+    "numReaderThreads": 1,
+    "numExecutors": 1,
+    "batchDuration": 5,
     "zookeepers": "zk-watson-1.us-west-2.test.expedia.com:2181",
     "zookeeperNodePath": "/kafka/watson",
     "kafkaTopic": "omniture-info-test",
